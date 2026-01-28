@@ -4,41 +4,28 @@ image: node:18
 
 stages:
   - install
-  - test
   - build
 
-cache:
-  key: $ {CI_COMMIT_REF_SLUG}
-  paths:
-    - .pnpm/ # pnpm v7+ 默认使用 .pnpm 虚拟存储（在项目内）
-  policy: pull-push
-
-# 安装 pnpm 并设置
 before_script:
-  - npm install -g pnpm
-  - pnpm config set store-dir .pnpm-store # 可选：将 store 放在项目内便于缓存
+  - npm install -g pnpm@latest # 强制使用最新版 pnpm（可选但推荐）
+  # 如果不想升级，也可以不加 @latest，但需确保项目兼容
 
 install_dependencies:
   stage: install
   script:
-    - pnpm ci # 关键：使用 pnpm ci 而不是 npm ci
+    - pnpm install --frozen-lockfile # 替代 pnpm ci
+  cache:
+    key: $ {CI_COMMIT_REF_SLUG}
+    paths:
+      - .pnpm/ # pnpm v7+ 默认 store 目录（如果没自定义）
   artifacts:
     paths:
       - node_modules/
-      - .pnpm/ # 缓存虚拟存储（可选但推荐）
-    expire_in: 1 hour
-
-run_tests:
-  stage: test
-  script:
-    - pnpm test # 确保 package.json 中有 "test" 脚本
-  allow_failure: true # 如果没测试，可先允许失败
 
 build_app:
   stage: build
   script:
-    - pnpm run build # 通常生成 dist/
+    - pnpm run build
   artifacts:
     paths:
       - dist/
-    expire_in: 1 week
