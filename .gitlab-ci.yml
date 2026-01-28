@@ -1,0 +1,36 @@
+# .gitlab-ci.yml
+
+image: node:18
+
+stages:
+  - install
+  - test
+  - build
+
+cache:
+  paths:
+    - node_modules/
+
+install_dependencies:
+  stage: install
+  script:
+    - npm ci # 或者用 yarn install --frozen-lockfile
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 hour
+
+run_tests:
+  stage: test
+  script:
+    - npm test # 确保你的 package.json 中有 "test" 脚本
+  allow_failure: true # 如果你还没写测试，可以先允许失败
+
+build_app:
+  stage: build
+  script:
+    - npm run build # 通常会生成 dist/ 目录
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
