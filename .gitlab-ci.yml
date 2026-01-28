@@ -1,6 +1,6 @@
 # .gitlab-ci.yml
 
-image: node:18
+image: node:20
 
 stages:
   - install
