@@ -12,6 +12,7 @@ const handleClick = () => {
   <button class="rounded bg-blue-500 px-4 py-2 text-white" @click="handleClick">
     点击我{{ store.count }}
   </button>
+  <router-view></router-view>
 </template>
 
 <style scoped></style>
