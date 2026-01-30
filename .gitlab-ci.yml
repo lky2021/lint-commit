@@ -4,6 +4,7 @@ image: node:20
 
 stages:
   - install
+  - lint
   - build
 
 before_script:
@@ -21,6 +22,12 @@ install_dependencies:
   artifacts:
     paths:
       - node_modules/
+
+lint_app:
+  stage: lint
+  script:
+    - pnpm run lint:fix
+    - pnpm run format
 
 build_app:
   stage: build
