@@ -6,6 +6,7 @@ stages:
   - install
   - lint
   - build
+  - deploy
 
 before_script:
   - npm install -g pnpm@latest # 强制使用最新版 pnpm（可选但推荐）
@@ -36,3 +37,15 @@ build_app:
   artifacts:
     paths:
       - dist/
+
+deploy_app:
+  stage: deploy
+  script:
+    - mkdir -p public
+    - cp -r dist/* public/
+    - ls -la public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
