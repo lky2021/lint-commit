@@ -38,7 +38,7 @@ build_app:
     paths:
       - dist/
 
-deploy_app:
+pages:
   stage: deploy
   script:
     - mkdir -p public
