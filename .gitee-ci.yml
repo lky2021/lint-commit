@@ -1,0 +1,45 @@
+# .gitee-ci.yml
+image: node:20
+
+stages:
+  - install
+  - lint
+  - build
+
+variables:
+  # 推荐使用国内镜像加速（可选）
+  NPM_CONFIG_REGISTRY: https://registry.npmmirror.com
+  PNPM_HOME: /root/.local/share/pnpm
+  PATH: $PNPM_HOME:$PATH
+
+before_script:
+  - npm install -g pnpm@latest
+  - pnpm --version
+
+install_dependencies:
+  stage: install
+  script:
+    - pnpm install --frozen-lockfile
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .pnpm/
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 hour
+
+lint_app:
+  stage: lint
+  script:
+    - pnpm run lint:fix
+    - pnpm run format
+
+build_app:
+  stage: build
+  script:
+    - pnpm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 7 days
