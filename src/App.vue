@@ -9,8 +9,9 @@ const handleClick = () => {
 </script>
 
 <template>
+  宝宝在干嘛：敲你
   <button class="rounded bg-blue-500 px-4 py-2 text-white" @click="handleClick">
-    点击我{{ store.count }}
+    {{ store.count }}
   </button>
   <router-view></router-view>
 </template>
