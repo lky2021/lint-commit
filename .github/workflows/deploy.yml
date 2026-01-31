@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-# 允许 job 写入 GitHub Pages（需要此权限）
 permissions:
   contents: read
   pages: write
@@ -27,12 +26,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          # 注意：使用 pnpm/action-setup 时，无需 cache: 'pnpm'（它内部已处理）
 
-      - name: Enable Corepack and prepare pnpm
-        run: |
-          corepack enable
-          corepack prepare pnpm@latest --activate
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: latest
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -45,9 +44,6 @@ jobs:
           restore-keys: |
             pnpm-store-${{ runner.os }}-node20-
 
-      # 上传 node_modules（可选，但通常不推荐；这里改为仅缓存，build job 重新 install）
-      # 更高效的做法是每个 job 都 install，但利用 pnpm cache 加速
-
   lint:
     needs: install
     runs-on: ubuntu-latest
@@ -59,10 +55,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
 
-      - name: Install pnpm
-        run: npm install -g pnpm@latest
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: latest
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -83,10 +80,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
 
-      - name: Install pnpm
-        run: npm install -g pnpm@latest
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: latest
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -104,7 +102,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' # 仅 main 分支部署
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Download dist artifact
         uses: actions/download-artifact@v4
