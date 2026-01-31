@@ -29,13 +29,14 @@ jobs:
           node-version: 20
           cache: 'pnpm'
 
-      - name: Install pnpm
-        run: npm install -g pnpm@latest
+      - name: Enable Corepack and prepare pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # 缓存 pnpm store（提升后续 job 安装速度）
       - name: Cache pnpm store
         uses: actions/cache@v4
         with:
