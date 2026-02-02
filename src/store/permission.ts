@@ -1,11 +1,13 @@
 import { publicRoutes, asyncRoutes } from '@/router/index.ts'
 import { ref } from 'vue'
+import type { MenuList } from './user.ts'
+import type { RouteRecordRaw } from 'vue-router'
 
 export const usePermissionStore = () => {
-  const routers = ref(publicRoutes)
+  const routers = ref<RouteRecordRaw[]>()
 
-  const filterRoutes = (menus) => {
-    const routes = []
+  const filterRoutes = (menus: MenuList[]) => {
+    const routes: RouteRecordRaw[] = []
     // 路由权限匹配
     menus.forEach(({ id }) => {
       // 权限名 与 路由的 name 匹配
@@ -17,7 +19,17 @@ export const usePermissionStore = () => {
       redirect: '/404',
     })
 
-    routers.value = [...publicRoutes, ...routes]
+    routers.value = publicRoutes.map((item) => {
+      if (item.path === '/') {
+        return {
+          ...item,
+          children:
+            item.children && item.children.length ? [...item.children, ...routes] : [...routes],
+        }
+      } else {
+        return item
+      }
+    })
     return routes
   }
 

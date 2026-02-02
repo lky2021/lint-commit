@@ -1,7 +1,23 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-const getUserData = () => {
+interface UserInfo {
+  roleList: RoleList[]
+  menuList: MenuList[]
+  btnList: string[]
+}
+
+export interface MenuList {
+  id: string
+  name: string
+}
+
+interface RoleList {
+  id: number
+  name: string
+}
+
+const getUserData = (): Promise<UserInfo> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
@@ -17,16 +33,23 @@ const getUserData = () => {
 }
 
 export const useUserStore = defineStore('user', () => {
-  const userInfo = ref({})
+  const userInfo = ref<null | UserInfo>(null)
+  const token = ref<string>('')
 
   const getUserInfo = async () => {
-    const res = (await getUserData()) as any
+    const res = await getUserData()
     userInfo.value = res
     return res
   }
 
+  const setToken = (str: string) => {
+    token.value = str
+  }
+
   return {
     userInfo,
+    token,
     getUserInfo,
+    setToken,
   }
 })

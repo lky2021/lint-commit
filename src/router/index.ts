@@ -1,9 +1,10 @@
 import { createWebHistory, createRouter } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
 import UserManageRouter from './modules/user.ts'
 
-export const asyncRoutes = [UserManageRouter]
+export const asyncRoutes: RouteRecordRaw[] = [UserManageRouter]
 
-export const publicRoutes = [
+export const publicRoutes: RouteRecordRaw[] = [
   {
     path: '/login',
     component: () => import('@/pages/login/index.vue'),

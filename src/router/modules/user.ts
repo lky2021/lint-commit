@@ -1,22 +1,15 @@
-export default {
+import type { RouteRecordRaw } from 'vue-router'
+
+const userRoute: RouteRecordRaw = {
   path: '/user',
   component: () => import('@/pages/layout/index.vue'),
-  redirect: '/user/manage',
-
-  name: 'roleList',
-
+  redirect: '/user/role',
+  name: 'a',
   meta: {
     title: 'user',
     icon: 'personnel',
   },
-  children: [
-    {
-      path: '/user/role',
-      component: () => import('@/views/user/role/index.vue'),
-      meta: {
-        title: 'roleList',
-        icon: 'role',
-      },
-    },
-  ],
+  children: [],
 }
+
+export default userRoute

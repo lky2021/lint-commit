@@ -1,5 +1,11 @@
-import router from './router'
-import store from './store'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/store/user.ts'
+import { usePermissionStore } from '@/store/permission.ts'
+
+const router = useRouter()
+const permissionStore = usePermissionStore()
+
+const userStore = useUserStore()
 
 const whiteList = ['/login']
 
@@ -10,16 +16,16 @@ const whiteList = ['/login']
  * next 往哪去
  */
 router.beforeEach(async (to, from, next) => {
-  if (store.getters.token) {
+  if (userStore.token) {
     if (to.path === '/login') {
       next('/')
     } else {
       // 判断用户信息是否获取
       // 若不存在用户信息，则需要获取用户信息
-      if (!store.getters.hasUserInfo) {
-        const { permission } = await store.dispatch('user/getUserInfo')
+      if (!userStore.userInfo) {
+        const { menuList } = await userStore.getUserInfo()
         // 处理用户权限，筛选出需要添加的权限
-        const filterRoutes = await store.dispatch('permission/filterRoutes', permission.menus)
+        const filterRoutes = permissionStore.filterRoutes(menuList)
         // 利用 addRoute 循环添加
         filterRoutes.forEach((item) => {
           router.addRoute(item)
