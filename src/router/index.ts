@@ -1,8 +1,5 @@
 import { createWebHistory, createRouter } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import UserManageRouter from './modules/user.ts'
-
-export const asyncRoutes: RouteRecordRaw[] = [UserManageRouter]
 
 export const publicRoutes: RouteRecordRaw[] = [
   {
@@ -10,20 +7,21 @@ export const publicRoutes: RouteRecordRaw[] = [
     component: () => import('@/pages/login/index.vue'),
   },
   {
+    path: '/404',
+    component: () => import('@/pages/error-page/404.vue'),
+  },
+  {
+    path: '/401',
+    component: () => import('@/pages/error-page/401.vue'),
+  },
+  {
     path: '/',
     component: () => import('@/pages/layout/index.vue'),
-    children: [
-      {
-        path: '404',
-        name: '404',
-        component: () => import('@/pages/error-page/404.vue'),
-      },
-      {
-        path: '401',
-        name: '401',
-        component: () => import('@/pages/error-page/401.vue'),
-      },
-    ],
+    name: 'layout',
+    meta: {
+      title: '我是layout',
+    },
+    children: [],
   },
 ]
 

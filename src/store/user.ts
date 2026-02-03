@@ -23,33 +23,39 @@ const getUserData = (): Promise<UserInfo> => {
       resolve({
         roleList: [{ id: 1, name: '超级管理员' }],
         menuList: [
-          { id: 'a', name: '/aa' },
-          { id: 'b', name: '/bb' },
+          { id: 'home', name: '/home' },
+          { id: 'about', name: '/about' },
         ],
-        btnList: ['a: add', 'a: upd', 'b: add', 'b: upd'],
+        btnList: ['home: add', 'home: upd', 'about: add', 'about: upd'],
       })
     }, 2000)
   })
 }
 
-export const useUserStore = defineStore('user', () => {
-  const userInfo = ref<null | UserInfo>(null)
-  const token = ref<string>('')
+export const useUserStore = defineStore(
+  'userStore',
+  () => {
+    const userInfo = ref<null | UserInfo>(null)
+    const token = ref<string>('')
 
-  const getUserInfo = async () => {
-    const res = await getUserData()
-    userInfo.value = res
-    return res
-  }
+    const getUserInfo = async () => {
+      const res = await getUserData()
+      userInfo.value = res
+      return res
+    }
 
-  const setToken = (str: string) => {
-    token.value = str
-  }
+    const setToken = (str: string) => {
+      token.value = str
+    }
 
-  return {
-    userInfo,
-    token,
-    getUserInfo,
-    setToken,
+    return {
+      userInfo,
+      token,
+      getUserInfo,
+      setToken,
+    }
+  },
+  {
+    persist: true,
   }
-})
+)

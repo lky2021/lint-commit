@@ -1,39 +1,38 @@
-import { useRouter } from 'vue-router'
+import { router } from '@/router/index.ts'
 import { useUserStore } from '@/store/user.ts'
-import { usePermissionStore } from '@/store/permission.ts'
-
-const router = useRouter()
-const permissionStore = usePermissionStore()
-
-const userStore = useUserStore()
+import { useMenuStore } from '@/store/menu'
 
 const whiteList = ['/login']
 
-/**
- * 路由前置守卫
- * to 要去哪里
- * from 当前导航正要离开的路由
- * next 往哪去
- */
+let hasDynamicRoutes = false
+
 router.beforeEach(async (to, from, next) => {
+  const menuStore = useMenuStore()
+  const userStore = useUserStore()
+
   if (userStore.token) {
     if (to.path === '/login') {
-      next('/')
+      next()
     } else {
-      // 判断用户信息是否获取
-      // 若不存在用户信息，则需要获取用户信息
+      //这里逻辑是正确的
       if (!userStore.userInfo) {
         const { menuList } = await userStore.getUserInfo()
-        // 处理用户权限，筛选出需要添加的权限
-        const filterRoutes = permissionStore.filterRoutes(menuList)
-        // 利用 addRoute 循环添加
+        const filterRoutes = menuStore.filterRoutes(menuList)
         filterRoutes.forEach((item) => {
-          router.addRoute(item)
+          router.addRoute('layout', item)
         })
-        // 添加完动态路由之后，需要在进行一次主动跳转
+        hasDynamicRoutes = true
         return next(to.path)
+      } else if (!hasDynamicRoutes) {
+        const filterRoutes = menuStore.filterRoutes(userStore.userInfo.menuList)
+        filterRoutes.forEach((item) => {
+          router.addRoute('layout', item)
+        })
+        hasDynamicRoutes = true
+        return next({ ...to })
+      } else {
+        next()
       }
-      next()
     }
   } else {
     if (whiteList.indexOf(to.path) > -1) {
