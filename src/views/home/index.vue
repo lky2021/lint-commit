@@ -1,6 +1,8 @@
 <template>
   <div>home</div>
   <div @click="goAbout">about</div>
+  <span v-permission="['home: add']">新增</span>
+  <span v-permission="['home: upd']" class="ml-[5px]">更新</span>
 </template>
 
 <script setup lang="ts">

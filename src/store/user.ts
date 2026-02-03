@@ -26,7 +26,7 @@ const getUserData = (): Promise<UserInfo> => {
           { id: 'home', name: '/home' },
           { id: 'about', name: '/about' },
         ],
-        btnList: ['home: add', 'home: upd', 'about: add', 'about: upd'],
+        btnList: ['home: upd', 'about: add'],
       })
     }, 2000)
   })
